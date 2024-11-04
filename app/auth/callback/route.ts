@@ -4,6 +4,9 @@ import { createClient } from '@/utils/supabase/server'
 import { db } from '@/lib/db'
 import { getUserByEmail } from '@/app/data-access/user'
 
+export const dynamic = 'force-dynamic';
+
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')

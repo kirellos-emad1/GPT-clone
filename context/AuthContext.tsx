@@ -38,7 +38,7 @@ export default function AuthProvider({
 
     // THROW ERROR IF AUTH_REDIRECT IS NOT SET
     if (
-        !process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL &&
+        !process.env.NEXT_PUBLIC_SITE_URL &&
         (process.env.NEXT_PUBLIC_VERCEL_ENV === "production" ||
             process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
     ) {

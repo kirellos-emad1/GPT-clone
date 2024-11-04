@@ -14,7 +14,7 @@ export async function signInWithGithub(provider: Provider) {
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: `https://gpt-clone-sooty.vercel.app/auth/callback`,
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
             },
         });
 
