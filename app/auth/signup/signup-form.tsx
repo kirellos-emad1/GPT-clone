@@ -1,12 +1,11 @@
 "use client";
 import { Provider } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Github } from "lucide-react";
 import { signup, signInWithGithub } from '@/app/actions/auth-actions'
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form"
 import { z } from "zod"

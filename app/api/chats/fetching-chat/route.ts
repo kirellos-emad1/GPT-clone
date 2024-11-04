@@ -2,9 +2,7 @@
 import { db } from '@/lib/db'; // Adjust import path as needed
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-export  async function GET(
-  req: Request,
-) {
+export  async function GET() {
 
 
   try {

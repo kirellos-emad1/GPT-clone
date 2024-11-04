@@ -1,7 +1,7 @@
 "use client";
 import { currentChatHasMessagesAtom } from "@/atoms/chat";
 import useChat from "@/hooks/useChat";
-import { ChatWithMessageCountAndSettings, MessageT } from "@/types/collections";
+import { ChatWithMessageCountAndSettings } from "@/types/collections";
 import { useAtomValue } from "jotai";
 import ChatInput from "./ChatInput";
 import NewChatCurrent from "./NewChatCurrent";
@@ -17,7 +17,6 @@ const Chatbox = ({
 }) => {
   const hasChatMessages = useAtomValue(currentChatHasMessagesAtom);
   useChat({ currentChat, initialMessages });
-  console.log(currentChat, initialMessages)
 
   return (
     <main className="relative flex flex-col items-stretch flex-1 w-full h-full ml-0 overflow-hidden transition-all transition-width md:ml-64 dark:bg-neutral-900 bg-neutral-50">

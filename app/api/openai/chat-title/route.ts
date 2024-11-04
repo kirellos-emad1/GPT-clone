@@ -3,10 +3,11 @@ import openai from "@/lib/openai";
 import { ChatGPTMessage } from "@/types/openai";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-"force dynamic"
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request): Promise<Response> {
-  const { messages, chatID, apiKey, model } = await req.json();
+  const { messages, chatID, apiKey } = await req.json();
 
   if (!messages) {
     return new Response("No messages!", { status: 400 });

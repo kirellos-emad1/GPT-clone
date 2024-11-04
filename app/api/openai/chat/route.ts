@@ -1,5 +1,4 @@
 import { OpenAIStream } from "@/lib/openai-stream";
-import { OpenAIStreamPayload } from "@/types/openai";
 import { createClient } from "@/utils/supabase/server";
 
 export const config = {

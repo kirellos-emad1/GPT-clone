@@ -22,7 +22,7 @@ export async function signInWithGithub(provider: Provider) {
 
         return { errorMessage: null, url: data.url };
     } catch (error) {
-        return { errorMessage: "Error logging in" };
+        return { errorMessage: "Error logging in", error };
     }
 };
 
@@ -37,7 +37,6 @@ export async function login(values: z.infer<typeof LoginSchema>) {
     if (!validatedFields.success) {
       return { error: "Invalid fields" };
     }
-    const { password, email} = validatedFields.data;
 
     const { error } = await supabase.auth.signInWithPassword(validatedFields.data)
 
@@ -67,7 +66,7 @@ export async function signup(values: z.infer<typeof RegisterSchema>) {
         return redirect('/error');
     }
 
-    const { data: signUpData, error } = await supabase.auth.signUp({
+    const {  error } = await supabase.auth.signUp({
 
         email,
         password,

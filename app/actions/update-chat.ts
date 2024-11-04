@@ -14,7 +14,6 @@ export async function updateChat(
   id: string, 
   data: ChatUpdateData
 ): Promise<{ success: boolean; error?: string }> {
-    console.log(data)
   try {
     await db.chat.update({
       where: { id },

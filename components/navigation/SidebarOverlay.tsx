@@ -1,5 +1,4 @@
 import React from "react";
-import { useAtom } from "jotai";
 
 interface SidebarOverlayProps {
   isMobileMenuOpen: boolean

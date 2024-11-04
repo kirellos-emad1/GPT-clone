@@ -1,7 +1,7 @@
 import {embeddingsClient} from "@/lib/openai";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-"force dynamic"
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request): Promise<Response> {
   const { messages, apiKey } = await req.json();

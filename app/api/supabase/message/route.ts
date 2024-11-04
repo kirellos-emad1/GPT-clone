@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
 import { Message } from "@prisma/client";
-"force dynamic"
+export const dynamic = 'force-dynamic';
 
 // POST
 export async function POST(req: Request): Promise<Response> {

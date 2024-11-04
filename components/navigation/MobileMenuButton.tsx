@@ -15,7 +15,7 @@ interface MobileProps {
 
 
 
-const MobileMenuButton: React.FC<MobileProps> = ({ showMenu, setShowMenu }) => {
+const MobileMenuButton: React.FC<MobileProps> = ({  setShowMenu }) => {
     const currentChat = useAtomValue(currentChatAtom);
 
     return (

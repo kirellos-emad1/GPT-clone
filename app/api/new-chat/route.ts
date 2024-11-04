@@ -12,7 +12,6 @@ export async function POST(request: Request) {
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
         }
-        console.log(user.id)
         const data:Chat = await request.json();
         const { model, system_prompt, advanced_settings, history_type} = data
         try {

@@ -1,18 +1,14 @@
 import Chatbox from "@/components/chat/ChatBox";
 import { db } from "@/lib/db";
-import { ChatWithMessageCountAndSettings, MessageT } from "@/types/collections";
+import { ChatWithMessageCountAndSettings } from "@/types/collections";
 import { notFound } from "next/navigation";
 export const revalidate = 0;
+type tParams = Promise<{ id: string }>;
 
-const ChatPage = async ({
-    params,
-}: {
-    params: {
-        id: string;
-    };
-}) => {
+
+const ChatPage = async (props: { params: tParams }) => {
     // Get Initial Messages
-    const { id } = await params;
+    const  {id}= await props.params;
 
     const messages = await db.message.findMany(
         {

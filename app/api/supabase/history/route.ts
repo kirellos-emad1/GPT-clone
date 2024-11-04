@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Prisma, Message } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: Request): Promise<Response> {
@@ -13,11 +13,6 @@ export async function POST(req: Request): Promise<Response> {
   } = await req.json();
 
   // Validate input
-  console.log({
-    similarity_threshold,
-    match_count,
-    chat_id,
-  });
 
   if (!query_embedding || !similarity_threshold || !match_count || !owner_id) {
     return NextResponse.json("Wrong payload!", { status: 400 });

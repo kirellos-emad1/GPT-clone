@@ -3,7 +3,6 @@ import { LogOut, RefreshCcw } from "lucide-react";
 import { openAPIKeyHandlerAtom } from "@/atoms/chat";
 
 import { useTheme } from "next-themes";
-import Link from "next/link";
 import { useSetAtom } from "jotai";
 
 import { useRouter } from "next/navigation";

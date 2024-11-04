@@ -3,8 +3,6 @@
 import { chatboxRefAtom, messagesAtom } from "@/atoms/chat";
 import { useAtomValue } from "jotai";
 import Message from "./Message";
-import { ChatWithMessageCountAndSettings, MessageT } from "@/types/collections";
-import useChat from "@/hooks/useChat";
 
 const Messages = () => {
   const containerRef = useAtomValue(chatboxRefAtom);

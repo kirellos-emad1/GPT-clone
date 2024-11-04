@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import openai from "@/lib/openai";
 import OpenAI from "openai";
-'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request): Promise<Response> {
   try {
@@ -28,7 +28,6 @@ export async function POST(req: Request): Promise<Response> {
         { status: 401 }
       );
     }
-    console.log(key)
 
     // Initialize OpenAI client
     const openaiClient = openai
