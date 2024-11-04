@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     const userId = req.headers.get('user-id'); // Assume this is passed in headers
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

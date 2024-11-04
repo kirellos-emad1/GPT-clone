@@ -2,9 +2,9 @@
 import { db } from '@/lib/db'; // Adjust import path as needed
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
+
 export  async function GET() {
-
-
   try {
     const supabase = await createClient()
     const {data: {user}} = await supabase.auth.getUser()

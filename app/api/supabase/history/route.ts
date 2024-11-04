@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import { createClient } from "@/utils/supabase/server";
+export const dynamic = 'force-dynamic';
+
 
 export async function POST(req: Request): Promise<Response> {
   const {
