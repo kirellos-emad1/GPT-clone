@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     const userId = req.headers.get('user-id');
-    const { model, system_prompt, advanced_settings, history_type, title } = await req.json();
+    const { model, system_prompt, advanced_settings,  title } = await req.json();
 
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
