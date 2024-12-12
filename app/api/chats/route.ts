@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
                 model,
                 system_prompt,
                 advanced_settings: JSON.stringify(advanced_settings),
-                history_type,
             },
         });
         return NextResponse.json(newChat);

@@ -55,7 +55,7 @@ const ProfileMenu = () => {
                     onClick={() => {
                         apiKeyHandler({
                             action: "remove",
-                          });
+                        });
                         router.push("/chat");
                     }}
                 >

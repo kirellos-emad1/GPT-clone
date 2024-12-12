@@ -4,17 +4,15 @@ import { Plus, Menu } from "lucide-react";
 import ProfileMenu from './ProfileMenu';
 import { Button } from "../ui/button";
 import Chats from "../chat/Chats";
+import { mobileMenuAtom } from "@/atoms/navigation";
+import { useAtom } from "jotai";
 
 import useChats from '@/hooks/useChats';
 
-interface SidebarProps {
-  isMobileMenuOpen: boolean
-  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-
-const Sidebar: React.FC<SidebarProps> = ({ isMobileMenuOpen, setShowMenu }) => {
+const Sidebar = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMobileMenuOpen, showMobileMenu] = useAtom(mobileMenuAtom);
+
   const { addChatHandler } = useChats();
 
 
@@ -50,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileMenuOpen, setShowMenu }) => {
               title="Close Menu"
               className="-ml-2 -mt-4"
               onClick={() => {
-                setShowMenu(false);
+                showMobileMenu(false);
               }}
               variant='ghost'
             >
@@ -63,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileMenuOpen, setShowMenu }) => {
           title='New Chat'
             onClick={() => {
               addChatHandler();
-              setShowMenu(false);
+              showMobileMenu(false);
             }}
             className="flex-shrink-0 bg-neutral-600 flex items-center gap-2 w-full mt-8 sm:mt-16"
           >

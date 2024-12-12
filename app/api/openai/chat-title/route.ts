@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request): Promise<Response> {
-  const { messages, chatID, apiKey } = await req.json();
+  const { messages, chatID } = await req.json();
 
   if (!messages) {
     return new Response("No messages!", { status: 400 });
@@ -15,10 +15,6 @@ export async function POST(req: Request): Promise<Response> {
 
   if (!chatID) {
     return new Response("No chatID!", { status: 400 });
-  }
-
-  if (!apiKey) {
-    return new Response("No key!", { status: 400 });
   }
 
   // Create Supabase Server Client

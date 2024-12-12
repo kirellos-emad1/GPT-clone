@@ -4,14 +4,9 @@ import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request): Promise<Response> {
-  const { messages, apiKey } = await req.json();
-
+  const { messages } = await req.json();
   if (!messages) {
     return new Response("No messages!", { status: 400 });
-  }
-
-  if (!apiKey) {
-    return new Response("No key!", { status: 400 });
   }
 
   // Create Supabase Server Client

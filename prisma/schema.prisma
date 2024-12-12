@@ -33,10 +33,10 @@ model Chat {
   model             String
   system_prompt     String
   advanced_settings Json
-  history_type      String
 
   owner    User      @relation(fields: [owner_id], references: [id])
   messages Message[]
+  @@map("chats")
 }
 
 model Message {
@@ -45,10 +45,16 @@ model Message {
   owner_id   String
   chat_id    String
   content    String
+  parent_message Message? @relation("messge_thread",fields: [parent_message_id], references: [id])
+  child_messages Message[] @relation("messge_thread")
+  parent_message_id String?
   role       String?
   token_size Int?
   embedding  Bytes?
   pair String?
+  @@index([chat_id])
+  @@index([parent_message_id])
+  @@map("messages")
 
   User User @relation(fields: [owner_id], references: [id])
   Chat Chat @relation(fields: [chat_id], references: [id])

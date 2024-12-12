@@ -24,6 +24,16 @@ const ChatPage = async (props: { params: tParams }) => {
                 owner_id: true,
                 role: true,
                 token_size: true,
+                child_messages:{
+                    select: {
+                        id: true,
+                        content: true,
+                        created_at: true,
+                        owner_id: true,
+                        role: true,
+                        parent_message_id:true,
+                    },
+                },
                 pair: true,
             },
             orderBy: [

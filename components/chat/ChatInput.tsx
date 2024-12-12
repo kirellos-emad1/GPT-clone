@@ -71,7 +71,7 @@ const ChatInput = () => {
           </div>
         )}
         {/* Regenerate Controller - Desktop */}
-        {!isHandling && isRegenerateSeen && (
+        {/* {!isHandling && isRegenerateSeen && (
           <div className="items-center justify-center hidden py-2 sm:flex">
             <Button
               variant="ghost"
@@ -81,15 +81,13 @@ const ChatInput = () => {
               <span>Regenerate Response</span> <RefreshCw size="14" />
             </Button>
           </div>
-        )}
-        {/* Settings */}
-        {/* Input Container */}
+        )} */}
         <form
           onSubmit={handleSubmit}
-          className="flex items-center w-full py-2 bg-white rounded-md shadow-sm focus-within:ring-neutral-300 dark:focus-within:ring-neutral-500 focus-within:ring-1 dark:bg-neutral-900"
+          className="flex  items-center w-full p-2 gap-4 rounded-md shadow-sm "
         >
           <Textarea
-            className="h-auto peer"
+            className="h-auto peer dark:focus:border-white focus:border-black border-neutral-400"
             placeholder="Type your message..."
             value={inputValue}
             onChange={(e) => {

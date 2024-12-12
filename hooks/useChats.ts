@@ -47,7 +47,7 @@ const useChats = () => {
         {
             revalidateOnFocus: false,
             revalidateOnReconnect: false,
-            dedupingInterval: 10000,
+            dedupingInterval: 1000,
             onError: (err) => {
                 console.log('SWR Error:', err);
             }
@@ -71,7 +71,6 @@ const useChats = () => {
                     model: openAISettings.model,
                     system_prompt: openAISettings.system_prompt,
                     advanced_settings: openAISettings.advanced_settings,
-                    history_type: openAISettings.history_type,
                 }),
             });
 

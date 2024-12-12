@@ -16,7 +16,7 @@ const modelPrices = {
     "gpt-3.5-turbo": 0.002 / 1000,
     "gpt-4": 0.03 / 1000,
 };
-export const defaultSystemPrompt = `You are makr.AI, a large language model trained by OpenAI.`;
+export const defaultSystemPrompt = `You are ChatGPT, a large language model trained by OpenAI.`;
 
 // To hold OpenAI API Key
 export const openAIAPIKeyAtom = atom<string>(process.env.OPENAI_API_KEY || "");
@@ -126,7 +126,7 @@ const openAIPayload = atom<OpenAIStreamPayload>((get) => {
 });
 
 // To control handling state of add message logic
-const handlingAtom = atom<boolean>(false);
+export const handlingAtom = atom<boolean>(false);
 // Chatbox Ref for controlling scroll
 export const chatboxRefAtom = atom(createRef<HTMLDivElement>());
 // Chat Input
@@ -136,6 +136,7 @@ export const ownerIDAtom = atom<string>("");
 // Where we keep current chat ID - (Read Only)
 export const chatIDAtom = atom<string>((get) => get(currentChatAtom)?.id ?? "");
 // Where we keep current chat
+export const messageIDAtom = atom<string>('')
 export const currentChatAtom = atom<null | ChatWithMessageCountAndSettings>(
     null
 );
@@ -212,7 +213,7 @@ export const cancelHandlerAtom = atom(
 // Add Message Handler
 export const addMessageAtom = atom(
     (get) => get(handlingAtom),
-    async (get, set, action: "generate" | "regenerate" = "generate") => {
+    async (get, set, action: "generate" | "regenerate" | "edit" = "generate", editedMessageId?: string) => {
         const inputValue = get(inputAtom);
         const token_size = get(tokenCountAtom).currentMessageToken;
         const isHandling = get(handlingAtom);
@@ -220,29 +221,42 @@ export const addMessageAtom = atom(
         const currentChat = get(currentChatAtom);
         const apiKey = get(openAIAPIKeyAtom);
         // Early Returns
-        if (
-            isHandling ||
-            (inputValue.length < 2 && action !== "regenerate") ||
-            !apiKey
-        ) {
+        if (isHandling || (!inputValue &&
+            action !== "regenerate"
+            && action !== "edit") ||
+            !apiKey) {
             return;
         }
+        let userMessage: MessageT;
 
         // Build User's Message Object in Function Scope - We need to use it in multiple places
-        const userMessage: MessageT = {
-            content: inputValue,
-            role: "user",
-            chat_id: chatID!!,
-            id: uuidv4(),
-            created_at: new Date(),
-            owner_id: "",
-            token_size,
-        };
+        if (action === "edit" && editedMessageId) {
+            console.log(editedMessageId)
+            userMessage = {
+                id: uuidv4(),
+                role:'user',
+                chat_id: chatID!!,
+                content: inputValue,
+                owner_id: get(ownerIDAtom),
+                parent_message_id:get(messageIDAtom),
+                token_size,
+                created_at: new Date(),
 
+            };
+        } else {
+            userMessage = {
+                content: inputValue,
+                role: "user",
+                chat_id: chatID!!,
+                id: uuidv4(),
+                created_at: new Date(),
+                owner_id: get(ownerIDAtom), // Make sure ownerIDAtom is defined
+                token_size,
+            };
+        }
         // Add to Supabase Handler
         const addMessageToDB = async (
             messages: MessageT[],
-            apiKey: string
         ) => {
             try {
                 // Get Embeddings for the messages
@@ -251,7 +265,7 @@ export const addMessageAtom = atom(
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ messages, apiKey }),
+                    body: JSON.stringify({ messages }),
                 });
 
                 const embeddings = await embeddingResponse.json();
@@ -291,14 +305,16 @@ export const addMessageAtom = atom(
 
         /* 1) Add User Message to the State */
         if (action === "generate") {
-            set(messagesAtom, (prev) => {
-                return [...prev, userMessage];
-            });
-
-            // Clear Input
+            set(messagesAtom, (prev) => [...prev, userMessage]);
             set(inputAtom, "");
-
-            // Scroll down after insert
+            scrollDown();
+        } else if (action === "edit" && editedMessageId) {
+            set(messagesAtom, (prev) => prev.map((m) => (m.id === get(messageIDAtom) ? userMessage : m)));
+            const insertedMessages = await addMessageToDB([userMessage]);
+            if (!insertedMessages) {
+                console.error("Failed to update message in DB")
+            }
+            set(inputAtom, "");
             scrollDown();
         }
 
@@ -306,18 +322,34 @@ export const addMessageAtom = atom(
         const initialID = uuidv4();
         // Set Initial Message to the State (We need show "thinking" message to the user before we get response")
         set(messagesAtom, (prev: any) => {
-            return [
-                ...prev,
-                {
-                    id: initialID,
-                    content: "",
-                    role: "assistant",
-                    created_at: new Date(),
-                    chat_id: chatID!!,
-                    token_size: 0,
-                },
-            ];
-        });
+            if(action === "edit" && editedMessageId)
+            {
+                return [
+                    ...prev, {
+                        id: initialID,
+                        content: "",
+                        role: "assistant",
+                        created_at: new Date(),
+                        chat_id: chatID!!,
+                        token_size: 0,
+                        parent_message_id:get(messageIDAtom),
+                    }
+                ]
+            }else{
+
+                return [
+                    ...prev,
+                    {
+                        id: initialID,
+                        content: "",
+                        role: "assistant",
+                        created_at: new Date(),
+                        chat_id: chatID!!,
+                        token_size: 0,
+                    },
+                ];
+            }
+            });
 
         // Scroll down after insert
         scrollDown();
@@ -344,7 +376,7 @@ export const addMessageAtom = atom(
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ messages: [lastUsersMessage], apiKey }),
+                    body: JSON.stringify({ messages: [lastUsersMessage] }),
                 });
 
                 const embeddings = await embeddingResponse.json();
@@ -362,7 +394,7 @@ export const addMessageAtom = atom(
                     similarity_threshold: 0.79,
                     match_count: 10,
                     owner_id: get(ownerIDAtom),
-                    chat_id:  chatID,
+                    chat_id: chatID,
                 }),
             });
             const history = await response.json();
@@ -454,7 +486,6 @@ export const addMessageAtom = atom(
             if (action === "generate") {
                 const insertedMessages = await addMessageToDB(
                     finalAIMessage ? [userMessage, finalAIMessage] : [userMessage],
-                    apiKey
                 );
 
                 for (const message of insertedMessages) {
@@ -489,7 +520,6 @@ export const addMessageAtom = atom(
             else {
                 const insertedMessages = await addMessageToDB(
                     [finalAIMessage],
-                    apiKey
                 );
                 // Change the dummy IDs with the real ones
                 if (!insertedMessages) {
@@ -574,7 +604,7 @@ export const regenerateHandlerAtom = atom(
             set(messagesAtom, allMessages);
             // Remove from Supabase
             await fetch("/api/supabase/message", {
-                method: "PATCH",
+                method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
