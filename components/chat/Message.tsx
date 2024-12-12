@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import "highlight.js/styles/github-dark-dimmed.css";
-import { Clipboard, Edit2Icon } from "lucide-react";
+import { Clipboard, Edit2Icon, RefreshCw } from "lucide-react";
 import { useRef, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import ReactMarkdown from "react-markdown";
@@ -10,23 +10,20 @@ import remarkGfm from "remark-gfm";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Message as MessageT } from "@prisma/client";
 import { useAtom, useSetAtom } from "jotai";
-import { messageIDAtom, handlingAtom, addMessageAtom, inputAtom } from "@/atoms/chat";
+import { messageIDAtom, addMessageAtom, inputAtom, regenerateHandlerAtom } from "@/atoms/chat";
 import { Button } from "../ui/button";
-import { v4 as uuidv4 } from "uuid";
 
 const Message = ({ message }: { message: MessageT }) => {
     console.log(message)
     const isAssistant = message.role === "assistant";
     const isUser = message.role === "user";
     const setMessages = useSetAtom(messageIDAtom);
-    const setHandling = useSetAtom(handlingAtom);
     const { user } = useAuth();
     const [isHandling, addMessageHandler] = useAtom(addMessageAtom);
     const [inputValue, setInputValue] = useAtom(inputAtom);
-
-    const [editMessage, setEditMessage] = useState<any>([])
     const [editMode, setEditMode] = useState(false);
-    const [newContent, setNewContent] = useState(message.content);
+    const [isRegenerateSeen, regenerateHandler] = useAtom(regenerateHandlerAtom);
+
     const codeRef = useRef<HTMLElement>(null);
     const handleEdit = async () => {
         setMessages(message.id)
@@ -135,6 +132,17 @@ const Message = ({ message }: { message: MessageT }) => {
                     </Button>
                 )}
             </div>
+                {!isHandling && isRegenerateSeen && (
+                    <div className="items-center justify-center hidden py-2 sm:flex">
+                        <Button
+                            variant="ghost"
+                            className="flex items-center gap-2"
+                            onClick={regenerateHandler}
+                        >
+                            <span>Regenerate Response</span> <RefreshCw size="14" />
+                        </Button>
+                    </div>
+                )}
         </div>
     );
 };
