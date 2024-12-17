@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import "highlight.js/styles/github-dark-dimmed.css";
-import { Clipboard, Edit2Icon, RefreshCw } from "lucide-react";
+import { Clipboard, Edit2Icon } from "lucide-react";
 import { useRef, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import ReactMarkdown from "react-markdown";
@@ -19,7 +19,7 @@ const Message = ({ message }: { message: MessageT }) => {
     const isUser = message.role === "user";
     const setMessages = useSetAtom(messageIDAtom);
     const { user } = useAuth();
-    const [_, addMessageHandler] = useAtom(addMessageAtom);
+    const [, addMessageHandler] = useAtom(addMessageAtom);
     const [editInputValue, setEditInputValue] = useAtom(editInputAtom);
     const [editMode, setEditMode] = useState(false);
 
