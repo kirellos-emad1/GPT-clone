@@ -131,6 +131,7 @@ export const handlingAtom = atom<boolean>(false);
 export const chatboxRefAtom = atom(createRef<HTMLDivElement>());
 // Chat Input
 export const inputAtom = atom<string>("");
+export const editInputAtom = atom<string>("");
 
 export const ownerIDAtom = atom<string>("");
 // Where we keep current chat ID - (Read Only)
@@ -151,7 +152,7 @@ export const currentChatHasMessagesAtom = atom<boolean>(
 // Token Calculations
 export const tokenCountAtom = atom((get) => {
     const currentModel = get(currentChatAtom)?.model ?? "gpt-3.5-turbo";
-    const currentMessage = get(inputAtom);
+    const currentMessage = get(inputAtom || editInputAtom);
 
     const currentMessageToken = encode(currentMessage).length;
     const currentMessagePrice =
@@ -215,6 +216,7 @@ export const addMessageAtom = atom(
     (get) => get(handlingAtom),
     async (get, set, action: "generate" | "regenerate" | "edit" = "generate", editedMessageId?: string) => {
         const inputValue = get(inputAtom);
+        const editInputValue = get(editInputAtom);
         const token_size = get(tokenCountAtom).currentMessageToken;
         const isHandling = get(handlingAtom);
         const chatID = get(chatIDAtom);
@@ -230,13 +232,12 @@ export const addMessageAtom = atom(
         let userMessage: MessageT;
 
         // Build User's Message Object in Function Scope - We need to use it in multiple places
-        if (action === "edit" && editedMessageId) {
-            console.log(editedMessageId)
+        if (action === "edit" ) {
             userMessage = {
                 id: uuidv4(),
                 role:'user',
                 chat_id: chatID!!,
-                content: inputValue,
+                content: editInputValue,
                 owner_id: get(ownerIDAtom),
                 parent_message_id:get(messageIDAtom),
                 token_size,
@@ -308,13 +309,13 @@ export const addMessageAtom = atom(
             set(messagesAtom, (prev) => [...prev, userMessage]);
             set(inputAtom, "");
             scrollDown();
-        } else if (action === "edit" && editedMessageId) {
+        } else if (action === "edit") {
             set(messagesAtom, (prev) => prev.map((m) => (m.id === get(messageIDAtom) ? userMessage : m)));
             const insertedMessages = await addMessageToDB([userMessage]);
             if (!insertedMessages) {
                 console.error("Failed to update message in DB")
             }
-            set(inputAtom, "");
+            set(editInputAtom, "");
             scrollDown();
         }
 
@@ -322,7 +323,7 @@ export const addMessageAtom = atom(
         const initialID = uuidv4();
         // Set Initial Message to the State (We need show "thinking" message to the user before we get response")
         set(messagesAtom, (prev: any) => {
-            if(action === "edit" && editedMessageId)
+            if(action === "edit" )
             {
                 return [
                     ...prev, {

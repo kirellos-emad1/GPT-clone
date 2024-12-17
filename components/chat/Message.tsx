@@ -10,7 +10,7 @@ import remarkGfm from "remark-gfm";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Message as MessageT } from "@prisma/client";
 import { useAtom, useSetAtom } from "jotai";
-import { messageIDAtom, addMessageAtom, inputAtom, regenerateHandlerAtom } from "@/atoms/chat";
+import { messageIDAtom, addMessageAtom, editInputAtom } from "@/atoms/chat";
 import { Button } from "../ui/button";
 
 const Message = ({ message }: { message: MessageT }) => {
@@ -19,12 +19,12 @@ const Message = ({ message }: { message: MessageT }) => {
     const isUser = message.role === "user";
     const setMessages = useSetAtom(messageIDAtom);
     const { user } = useAuth();
-    const [isHandling, addMessageHandler] = useAtom(addMessageAtom);
-    const [inputValue, setInputValue] = useAtom(inputAtom);
+    const [_, addMessageHandler] = useAtom(addMessageAtom);
+    const [editInputValue, setEditInputValue] = useAtom(editInputAtom);
     const [editMode, setEditMode] = useState(false);
-    const [isRegenerateSeen, regenerateHandler] = useAtom(regenerateHandlerAtom);
 
     const codeRef = useRef<HTMLElement>(null);
+    console.log(message.id)
     const handleEdit = async () => {
         setMessages(message.id)
         await addMessageHandler("edit", message.id);
@@ -61,11 +61,11 @@ const Message = ({ message }: { message: MessageT }) => {
                     {editMode ? (
                         <div className="flex flex-col gap-2">
                             <textarea
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                value={editInputValue}
+                                onChange={(e) => setEditInputValue(e.target.value)}
                                 className="w-full p-2 border rounded-md dark:bg-neutral-800 bg-neutral-50"
                             />
-                            <Button onClick={handleEdit} variant={'default'} size="sm">
+                            <Button type="submit" onClick={handleEdit} variant={'default'} size="sm">
                                 Save
                             </Button>
                         </div>
@@ -132,17 +132,6 @@ const Message = ({ message }: { message: MessageT }) => {
                     </Button>
                 )}
             </div>
-                {!isHandling && isRegenerateSeen && (
-                    <div className="items-center justify-center hidden py-2 sm:flex">
-                        <Button
-                            variant="ghost"
-                            className="flex items-center gap-2"
-                            onClick={regenerateHandler}
-                        >
-                            <span>Regenerate Response</span> <RefreshCw size="14" />
-                        </Button>
-                    </div>
-                )}
         </div>
     );
 };
